@@ -123,79 +123,202 @@ export default function Contacts() {
 
   if (loading || !user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-white text-neutral-900 dark:bg-slate-900 dark:text-slate-50">
-        Loading...
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-9 w-9 animate-spin rounded-full border-2 border-blue-500/30 border-t-blue-500" />
+          <p className="text-sm text-slate-400">Loading...</p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white p-6 text-neutral-900 dark:bg-slate-900 dark:text-slate-50">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Contacts</h1>
-          <p className="text-sm opacity-70">{user.displayName ?? user.email}</p>
+    <main className="relative min-h-screen overflow-hidden bg-slate-950 px-5 py-6 text-slate-50 sm:px-8 lg:px-12">
+
+      {/* Background decoration */}
+      <div className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-indigo-600/10 blur-3xl" />
+
+      <div className="relative z-10 mx-auto max-w-7xl">
+
+        {/* Header */}
+        <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-xl backdrop-blur-xl sm:p-6">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-lg font-bold shadow-lg shadow-blue-500/20">
+                SC
+              </div>
+
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">
+                  Contacts
+                </h1>
+                <p className="text-sm text-slate-400">
+                  {user.displayName ?? user.email}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Link
+                href="/history"
+                className="rounded-xl border border-blue-500/20 bg-blue-500/10 px-5 py-2.5 text-sm font-medium text-blue-400 transition-all hover:bg-blue-500/20 hover:text-blue-300"
+              >
+                Call History
+              </Link>
+
+              <button
+                onClick={logout}
+                className="cursor-pointer rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white"
+              >
+                Log out
+              </button>
+            </div>
+
+          </div>
         </div>
 
-        <Link href="/history" className="mr-3 text-blue-600 dark:text-blue-400 bg-blue-700/10 hover:bg-blue-700/20 px-4 py-2 rounded-lg cursor-pointer">
-          Call History
-        </Link>
+        {/* Notification */}
+        {!pushOn && (
+          <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
 
-        <button
-          onClick={logout}
-          className="rounded-lg border border-blue-600 px-4 py-2 text-blue-600 dark:text-blue-400 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800"
-        >
-          Log out
-        </button>
-      </div>
-
-      {!pushOn && (
-        <button
-            onClick={turnOnPush}
-            className="mb-4 rounded-lg border border-green-600 px-4 py-2 text-green-600 cursor-pointer hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-slate-800"
-        >
-            Turn on call notifications
-        </button>
-      )}
-
-      <div className="mb-2 flex gap-2">
-        <input
-          type="email"
-          placeholder="Friend's Google email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 rounded-lg border border-gray-300 bg-white p-3 dark:border-slate-600 dark:bg-slate-800"
-        />
-        <button
-          onClick={addContact}
-          disabled={adding}
-          className="rounded-lg bg-blue-600 px-4 py-3 text-white hover:bg-blue-700 disabled:opacity-50  cursor-pointer"
-        >
-          {adding ? "Adding..." : "Add"}
-        </button>
-      </div>
-      {message && <p className="mb-4 text-sm">{message}</p>}
-
-      <ul className="mt-4 space-y-3">
-        {contacts.length === 0 && <li className="opacity-70">No contacts yet.</li>}
-        {contacts.map((c) => (
-          <li
-            key={c.uid}
-            className="flex items-center justify-between rounded-lg bg-gray-100 p-4 dark:bg-slate-800"
-          >
             <div>
-              <p className="text-lg">{c.name}</p>
-              <p className="text-sm opacity-70">{c.email}</p>
+              <p className="font-semibold text-emerald-400">
+                Call notifications
+              </p>
+              <p className="mt-1 text-sm text-slate-400">
+                Enable notifications to know when someone calls you.
+              </p>
             </div>
+
             <button
-              onClick={() => startCall(c)}
-              className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 cursor-pointer"
+              onClick={turnOnPush}
+              className="cursor-pointer rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-5 py-2.5 text-sm font-semibold text-emerald-400 transition-all hover:bg-emerald-500/20"
             >
-              Call
+              Turn on notifications
             </button>
-          </li>
-        ))}
-      </ul>
+
+          </div>
+        )}
+
+        {/* Add contact */}
+        <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-xl backdrop-blur-xl sm:p-6">
+
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold">
+              Add a contact
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Connect with a friend using their Google email.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+
+            <input
+              type="email"
+              placeholder="Friend's Google email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 rounded-xl border border-white/10 bg-slate-900/70 p-3.5 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20"
+            />
+
+            <button
+              onClick={addContact}
+              disabled={adding}
+              className="cursor-pointer rounded-xl bg-blue-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {adding ? "Adding..." : "Add"}
+            </button>
+
+          </div>
+
+          {message && (
+            <div className="mt-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+              {message}
+            </div>
+          )}
+
+        </div>
+
+        {/* Contacts list */}
+        <div>
+
+          <div className="mb-4 flex items-end justify-between">
+            <div>
+              <h2 className="text-xl font-bold">
+                Your Contacts
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                {contacts.length}{" "}
+                {contacts.length === 1 ? "contact" : "contacts"}
+              </p>
+            </div>
+          </div>
+
+          <ul className="grid gap-4 md:grid-cols-2">
+
+            {contacts.length === 0 && (
+              <li className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] p-10 text-center md:col-span-2">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-2xl">
+                  👥
+                </div>
+
+                <p className="font-medium text-slate-300">
+                  No contacts yet
+                </p>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Add a friend using their Google email above.
+                </p>
+              </li>
+            )}
+
+            {contacts.map((c) => (
+              <li
+                key={c.uid}
+                className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-lg backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.08]"
+              >
+
+                <div className="flex min-w-0 items-center gap-4">
+
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-lg font-bold shadow-lg shadow-blue-500/20">
+                    {c.name
+                      ? c.name.charAt(0).toUpperCase()
+                      : "?"}
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-semibold text-slate-100">
+                      {c.name}
+                    </p>
+
+                    <p className="mt-1 truncate text-sm text-slate-500">
+                      {c.email}
+                    </p>
+                  </div>
+
+                </div>
+
+                <button
+                  onClick={() => startCall(c)}
+                  className="ml-4 flex shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-500 hover:-translate-y-0.5"
+                >
+                  <span>☎</span>
+                  Call
+                </button>
+
+              </li>
+            ))}
+
+          </ul>
+
+        </div>
+
+      </div>
     </main>
   );
 }
